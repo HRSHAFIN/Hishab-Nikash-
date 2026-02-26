@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Analysis</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #00796b;
+            color: #fff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            transition: left 0.3s ease;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 30px;
+            font-size: 30px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #003d33;
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+
+        .main {
+            margin-left: 320px;
+            padding: 30px;
+            width: calc(100% - 350px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00796b;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+
+        .date-range {
+            margin-bottom: 30px;
+        }
+
+        .metrics {
+            display: flex;
+            justify-content: space-around;
+            width: 80%;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric {
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        .chart-container {
+            width: 90%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #00796b;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #005b4f;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+
+            .metrics {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .metric {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="transition_list.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="account_details.html"><i class="fas fa-plus-circle"></i> Add Account</a></li>
+            <li><a href="account_list.html"><i class="fas fa-list"></i> View Accounts</a></li>
+            <li><a href="transection_details.html"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+            <!-- <li><a href="transition_list.html"><i class="fas fa-list-alt"></i> Transactions List</a></li> -->
+            <li><a href="visual_analysis.html"><i class="fas fa-chart-line"></i> Visual Analysis</a></li>
+            <li><a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <h1>Visual Analysis</h1>
+
+        <div class="date-range">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate">
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate">
+            <button id="filterBtn">Filter</button>
+            <button id="clearFilterBtn">Clear Filter</button>
+        </div>
+
+        <div class="metrics">
+            <div class="metric">
+                <strong>Total Income:</strong><br>
+                <span id="totalIncome">0.00</span>
+            </div>
+            <div class="metric">
+                <strong>Total Expenses:</strong><br>
+                <span id="totalExpenses">0.00</span>
+            </div>
+            <div class="metric">
+                <strong>Net Balance:</strong><br>
+                <span id="netBalance">0.00</span>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <canvas id="bankChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="cashChart"></canvas>
+        </div>
+        <div class="chart-container">
+            <canvas id="balanceChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        function prepareData(startDate = null, endDate = null) {
+            const labels = [];
+            const bankIncome = [];
+            const bankExpenses = [];
+            const cashIncome = [];
+            const cashExpenses = [];
+            const totalBalance = [];
+
+            // Filter transactions based on date range
+            const filteredTransactions = transactions.filter(t => {
+                const date = new Date(t.date);
+                return (!startDate || date >= startDate) && (!endDate || date <= endDate);
+            });
+
+            // Prepare data for the charts
+            filteredTransactions.forEach(t => {
+                labels.push(t.date);
+                if (t.moneyType.toLowerCase() === 'bank') {
+                    if (t.type.toLowerCase() === 'income') {
+                        bankIncome.push(parseFloat(t.amount));
+                    } else {
+                        bankExpenses.push(parseFloat(t.amount));
+                    }
+                } else if (t.moneyType.toLowerCase() === 'cash') {
+                    if (t.type.toLowerCase() === 'income') {
+                        cashIncome.push(parseFloat(t.amount));
+                    } else {
+                        cashExpenses.push(parseFloat(t.amount));
+                    }
+                }
+                totalBalance.push(t.type.toLowerCase() === 'income' ? t.amount : -t.amount);
+            });
+
+            // Calculate total income, expenses, and net balance
+            const totalIncome = filteredTransactions.reduce((acc, t) => acc + (t.type.toLowerCase() === 'income' ? parseFloat(t.amount) : 0), 0);
+            const totalExpenses = filteredTransactions.reduce((acc, t) => acc + (t.type.toLowerCase() === 'expense' ? parseFloat(t.amount) : 0), 0);
+            const netBalance = totalIncome - totalExpenses;
+
+            // Update metrics in the UI
+            document.getElementById('totalIncome').textContent = totalIncome.toFixed(2);
+            document.getElementById('totalExpenses').textContent = totalExpenses.toFixed(2);
+            document.getElementById('netBalance').textContent = netBalance.toFixed(2);
+
+            return {
+                labels,
+                bankIncome,
+                bankExpenses,
+                cashIncome,
+                cashExpenses,
+                totalBalance
+            };
+        }
+
+        const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
+
+// Function to set the active link based on saved value in localStorage
+function setActiveLink() {
+    const activeLink = localStorage.getItem('activeLink');
+    if (activeLink) {
+        sidebarLinks.forEach(link => {
+            if (link.getAttribute('href') === activeLink) {
+                link.classList.add('active');
+            }
+        });
+    }
+}
+
+// Set active link on page load
+setActiveLink();
+
+// Add click event to all links to save the active link in localStorage
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', function () {
+        // Remove 'active' class from all links
+        sidebarLinks.forEach(link => link.classList.remove('active'));
+
+        // Add 'active' class to the clicked link
+        this.classList.add('active');
+
+        // Save the clicked link href to localStorage
+        localStorage.setItem('activeLink', this.getAttribute('href'));
+    });
+});
+
+        function createCharts(startDate = null, endDate = null) {
+            const data = prepareData(startDate, endDate);
+            const ctxBank = document.getElementById('bankChart').getContext('2d');
+            const ctxCash = document.getElementById('cashChart').getContext('2d');
+            const ctxBalance = document.getElementById('balanceChart').getContext('2d');
+
+            // Clear previous charts
+            if (Chart.getChart(ctxBank)) Chart.getChart(ctxBank).destroy();
+            if (Chart.getChart(ctxCash)) Chart.getChart(ctxCash).destroy();
+            if (Chart.getChart(ctxBalance)) Chart.getChart(ctxBalance).destroy();
+
+            new Chart(ctxBank, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Bank Income',
+                            data: data.bankIncome,
+                            backgroundColor: 'rgba(76, 175, 80, 0.7)', // Light green
+                            borderColor: 'green',
+                            borderWidth: 1,
+                        },
+                        {
+                            label: 'Bank Expenses',
+                            data: data.bankExpenses,
+                            backgroundColor: 'rgba(244, 67, 54, 0.7)', // Light red
+                            borderColor: 'darkred',
+                            borderWidth: 1,
+                        },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            new Chart(ctxCash, {
+                type: 'bar',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Cash Income',
+                            data: data.cashIncome,
+                            backgroundColor: 'rgba(33, 150, 243, 0.7)', // Light blue
+                            borderColor: 'blue',
+                            borderWidth: 1,
+                        },
+                        {
+                            label: 'Cash Expenses',
+                            data: data.cashExpenses,
+                            backgroundColor: 'rgba(255, 152, 0, 0.7)', // Light orange
+                            borderColor: 'orange',
+                            borderWidth: 1,
+                        },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            new Chart(ctxBalance, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Total Balance',
+                            data: data.totalBalance,
+                            borderColor: 'rgba(156, 39, 176, 1)', // Purple
+                            backgroundColor: 'rgba(156, 39, 176, 0.2)',
+                            fill: true,
+                        },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('filterBtn').addEventListener('click', function () {
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            createCharts(startDate, endDate);
+        });
+
+        document.getElementById('clearFilterBtn').addEventListener('click', function () {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            createCharts(); // Reload charts without date filter
+        });
+
+        // Initial load of charts
+        createCharts();
+    </script>
+</body>
+
+</html>

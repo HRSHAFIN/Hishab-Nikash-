@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login / Register - Hishab Nikash</title>
+    <style>
+        :root {
+            --primary-color: #00796b;
+            --accent-color: #ff0000;
+            --input-border-color: rgba(255, 255, 255, 0.2);
+            --input-focus-color: rgba(0, 150, 136, 0.8);
+            --bg-gradient: linear-gradient(135deg, #e0f7fa, #e1bee7);
+            --glass-color: rgba(255, 255, 255, 0.1);
+            --text-light: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: var(--bg-gradient);
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 450px;
+            height: 700px;
+            background: var(--glass-color);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .form-container {
+            display: flex;
+            width: 200%;
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .form {
+            flex: 1;
+            padding: 40px;
+            color: var(--text-light);
+            transition: opacity 0.5s;
+            min-width: 50%;
+        }
+
+        .form h2 {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #29807F; /* Bright blue title color */
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: rgba(78, 73, 73, 0.8);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--input-border-color);
+            border-radius: 8px;
+            background: rgba(105, 105, 105, 0.1);
+            color: rgba(128, 128, 128, 0.8);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s, background 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--input-focus-color);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            text-align: center;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+            text-decoration: none; /* Ensures it's styled as a button */
+        }
+
+        .btn:hover {
+            background-color: var(--accent-color);
+        }
+
+        .toggle-link {
+            margin-top: 15px;
+            text-align: center;
+            display: block;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        .toggle-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .toggle-link a:hover {
+            color: var(--accent-color);
+        }
+
+        .toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: var(--text-light);
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: none; /* Hides the toggle button */
+        }
+
+        .form-container.show-register {
+            transform: translateX(-50%);
+        }
+
+        /* Animated Background Effects */
+        .background-effects {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .background-effects span {
+            position: absolute;
+            display: block;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+        }
+
+        .background-effects span:nth-child(1) {
+            left: 25%;
+            top: 15%;
+            animation-duration: 4s;
+            animation-delay: 0s;
+        }
+
+        .background-effects span:nth-child(2) {
+            left: 65%;
+            top: 10%;
+            animation-duration: 4s;
+            animation-delay: 2s;
+        }
+
+        .background-effects span:nth-child(3) {
+            left: 50%;
+            top: 65%;
+            animation-duration: 5s;
+            animation-delay: 4s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.2);
+            }
+            100% {
+                transform: translateY(0) scale(1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="toggle-btn" id="toggleForm">Register</button>
+        <div class="form-container" id="formContainer">
+            <!-- Login Form -->
+            <div class="form login-form">
+                <h2>Login</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="login-email">Email Address</label>
+                        <input type="email" id="login-email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input type="password" id="login-password" placeholder="Enter your password" required>
+                    </div>
+                    <!-- Use an anchor tag for login button -->
+                    <a href="transition_list.html" class="btn">Login</a>
+                    <p class="toggle-link">Don't have an account? <a href="#" id="switchToRegister">Register Here</a></p>
+                </form>
+            </div>
+            <!-- Register Form -->
+            <div class="form register-form">
+                <h2>Create Your Account</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-username">Username</label>
+                        <input type="text" id="register-username" placeholder="Create a username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email Address</label>
+                        <input type="email" id="register-email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-mobile">Mobile Number</label>
+                        <input type="tel" id="register-mobile" placeholder="Enter your mobile number" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" placeholder="Create a password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirm Password</label>
+                        <input type="password" id="register-confirm-password" placeholder="Confirm your password" required>
+                    </div>
+                    <!-- Use an anchor tag for register button -->
+                    <a href="login.html" class="btn">Register</a>
+                    <p class="toggle-link">Already have an account? <a href="#" id="switchToLogin">Login Here</a></p>
+                </form>
+            </div>
+        </div>
+        <!-- Animated Background Effects -->
+        <div class="background-effects">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+
+    <script>
+        const toggleFormButton = document.getElementById('toggleForm');
+        const formContainer = document.getElementById('formContainer');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+
+        toggleFormButton.addEventListener('click', () => {
+            formContainer.classList.toggle('show-register');
+        });
+
+        switchToRegister.addEventListener('click', (e) => {
+            e.preventDefault();
+            formContainer.classList.add('show-register');
+            toggleFormButton.textContent = 'Login';
+        });
+
+        switchToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            formContainer.classList.remove('show-register');
+            toggleFormButton.textContent = 'Register';
+        });
+    </script>
+</body>
+</html>

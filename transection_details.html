@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Details</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #eaeef1;
+            margin: 0;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #00796b;
+            color: #fff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            transition: left 0.3s ease;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 30px;
+            font-size: 30px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #003d33;
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+        .main {
+            margin-left: 250px;
+            padding: 40px;
+            width: calc(100% - 250px);
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            color: #00796b;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            flex: 1;
+            position: relative;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #00796b;
+            outline: none;
+        }
+        button {
+            padding: 12px 20px;
+            border: none;
+            background-color: #00796b;
+            color: white;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #005f57;
+        }
+        .error-message {
+            color: red;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        fieldset {
+            border: 2px solid #00796b;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        legend {
+            font-weight: bold;
+            padding: 0 10px;
+            color: #00796b;
+        }
+        .input-icon {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+        .input-icon i {
+            position: absolute;
+            left: 12px;
+            top: 69%;
+            transform: translateY(-50%);
+            color: #00796b;
+            font-size: 18px;
+        }
+        .input-icon input {
+            padding-left: 40px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            .main {
+                margin-left: 0;
+                padding: 20px;
+                width: 100%;
+            }
+            .form-row {
+                flex-direction: column;
+            }
+            .form-group {
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="transition_list.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="account_details.html"><i class="fas fa-plus-circle"></i> Add Account</a></li>
+            <li><a href="account_list.html"><i class="fas fa-list"></i> View Accounts</a></li>
+            <li><a href="transection_details.html"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+            <!-- <li><a href="transition_list.html"><i class="fas fa-list-alt"></i> Transactions List</a></li> -->
+            <li><a href="visual_analysis.html"><i class="fas fa-chart-line"></i> Visual Analysis</a></li>
+            <li><a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div class="container">
+            <h1>Transaction Details</h1>
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            <form id="transactionDetailsForm">
+                <fieldset>
+                    <legend>Transaction Details</legend>
+                    <div class="form-row">
+                        <div class="form-group input-icon">
+                            <label for="userName">User Name</label>
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="userName" placeholder="Enter User Name" required>
+                        </div>
+                        <div class="form-group input-icon">
+                            <label for="transactionType">Transaction Type</label>
+                            <i class="fas fa-exchange-alt"></i>
+                            <select id="transactionType" required>
+                                <option value="">Select transaction type</option>
+                                <option value="income">Income</option>
+                                <option value="expense">Expense</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group input-icon">
+                            <label for="transactionAmount">Amount</label>
+                            <i class="fas fa-dollar-sign"></i>
+                            <input type="number" id="transactionAmount" placeholder="Enter amount" required>
+                        </div>
+                        <div class="form-group input-icon">
+                            <label for="transactionDate">Transaction Date</label>
+                            <i class="fas fa-calendar-alt"></i>
+                            <input type="date" id="transactionDate" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group input-icon">
+                            <label for="transactionReason">Reason</label>
+                            <i class="fa fa-pencil-square"></i>
+                            <select id="transactionReason" required>
+                                <option value="">Select reason</option>
+                                <option value="salary">Salary</option>
+                                <option value="food">Food</option>
+                                <option value="product">Product</option>
+                                <option value="bills">Bills</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group input-icon">
+                            <label for="transactionDescription">Description</label>
+                            <i class="fas fa-info-circle"></i>
+                            <input type="text" id="transactionDescription" placeholder="Enter description" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group input-icon">
+                            <label for="moneyType">Money Type</label>
+                            <i class="fas fa-money-bill-wave"></i>
+                            <select id="moneyType" required>
+                                <option value="">Select money type</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Bank">Bank</option>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+                <button type="submit">Save Transaction Details</button>
+                <button type="button" id="importButton">Import CSV</button>
+                <input type="file" id="csvFileInput" accept=".csv" style="display:none;" />
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const transactionDetailsForm = document.getElementById('transactionDetailsForm');
+        const errorMessageDiv = document.getElementById('errorMessage');
+        const importButton = document.getElementById('importButton');
+        const csvFileInput = document.getElementById('csvFileInput');
+
+        transactionDetailsForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            saveTransactionDetails();
+        });
+
+        const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
+
+// Function to set the active link based on saved value in localStorage
+function setActiveLink() {
+    const activeLink = localStorage.getItem('activeLink');
+    if (activeLink) {
+        sidebarLinks.forEach(link => {
+            if (link.getAttribute('href') === activeLink) {
+                link.classList.add('active');
+            }
+        });
+    }
+}
+
+// Set active link on page load
+setActiveLink();
+
+// Add click event to all links to save the active link in localStorage
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', function () {
+        // Remove 'active' class from all links
+        sidebarLinks.forEach(link => link.classList.remove('active'));
+
+        // Add 'active' class to the clicked link
+        this.classList.add('active');
+
+        // Save the clicked link href to localStorage
+        localStorage.setItem('activeLink', this.getAttribute('href'));
+    });
+});
+
+        function saveTransactionDetails() {
+            const userName = document.getElementById('userName').value;
+            const transactionType = document.getElementById('transactionType').value;
+            const transactionAmount = parseFloat(document.getElementById('transactionAmount').value);
+            const transactionDate = document.getElementById('transactionDate').value;
+            const transactionReason = document.getElementById('transactionReason').value;
+            const transactionDescription = document.getElementById('transactionDescription').value;
+            const moneyType = document.getElementById('moneyType').value;
+
+            if (!userName || !transactionType || isNaN(transactionAmount) || !transactionDate || !transactionReason || !transactionDescription || !moneyType) {
+                showErrorMessage('Please fill out all fields.');
+                return;
+            }
+
+            const transaction = {
+                userName,
+                type: transactionType,
+                amount: transactionAmount,
+                date: transactionDate,
+                reason: transactionReason,
+                description: transactionDescription,
+                moneyType
+            };
+
+            saveTransactionToLocal(transaction);
+            alert('Transaction saved successfully!');
+        }
+
+        function saveTransactionToLocal(transaction) {
+            const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            transactions.push(transaction);
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+        }
+
+        function showErrorMessage(message) {
+            errorMessageDiv.innerHTML = message;
+            errorMessageDiv.style.display = 'block';
+        }
+
+        // CSV Import Logic
+        importButton.addEventListener('click', function() {
+            csvFileInput.click();
+        });
+
+        csvFileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const csvData = e.target.result;
+                    const transactions = parseCSV(csvData);
+                    storeTransactions(transactions);
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        function parseCSV(csvData) {
+            const rows = csvData.split('\n').filter(row => row.trim() !== ''); // Split by line and remove empty rows
+            const headers = rows[0].split(','); // Get the headers
+            const transactions = rows.slice(1).map(row => {
+                const values = row.split(',');
+                return {
+                    userName: values[0],
+                    date: values[1],
+                    reason: values[2],
+                    description: values[3],
+                    moneyType: values[4],
+                    amount: parseFloat(values[5]) || parseFloat(values[6]), // Check income or expense
+                    type: values[5] ? 'income' : 'expense' // Determine type based on which column has the value
+                };
+            });
+            return transactions;
+        }
+
+        function storeTransactions(transactions) {
+            const existingTransactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            const updatedTransactions = existingTransactions.concat(transactions);
+            localStorage.setItem('transactions', JSON.stringify(updatedTransactions));
+            alert('Transactions imported successfully!');
+        }
+    </script>
+</body>
+</html>

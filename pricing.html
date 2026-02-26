@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - Hishab Nikash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> <!-- Assuming you're using Roboto -->
+    <style>
+        :root {
+            --primary-color: #29807F;
+            --accent-color: #E21C1C;
+            --light-gray: #f9f9f9;
+            --dark-gray: #333;
+            --btn-hover: #333;
+            --btn-color: white;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif; /* Applied Roboto font globally */
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+        }
+
+        /* Main header styles from your main page */
+        .header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.9); /* semi-transparent */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* subtle shadow */
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: "Kobe", Helvetica, sans-serif;
+            font-weight: 700;
+            font-size: 1.5em;
+            color: var(--primary-color);
+        }
+
+        .site-menu {
+            display: flex;
+        }
+
+        .menu-item {
+            margin-left: 40px;
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: color 0.3s ease;
+        }
+
+        .menu-item:hover {
+            color: #004d40; /* Darker shade on hover */
+        }
+
+        /* Pricing section */
+        .pricing-section {
+            text-align: center;
+            padding: 80px 20px;
+            margin-top: 120px; /* Add space for the fixed header */
+        }
+
+        .pricing-section h1 {
+            font-family: "Kobe", sans-serif; /* Main page font for headings */
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: var(--dark-gray);
+        }
+
+        .pricing-section p {
+            font-family: 'Roboto', sans-serif; /* Ensure paragraph uses the main font */
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 50px;
+        }
+
+        .plans-container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .plan-card {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .plan-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .plan-card h3 {
+            font-family: 'Kobe', sans-serif; /* Main heading font */
+            font-size: 24px;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+        }
+
+        .plan-card .price {
+            font-size: 28px;
+            color: var(--accent-color);
+            margin-bottom: 10px;
+        }
+
+        .plan-card p {
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .plan-card ul {
+            list-style: none;
+            text-align: left;
+            padding-left: 20px;
+        }
+
+        .plan-card ul li {
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            color: var(--dark-gray);
+            margin-bottom: 10px;
+        }
+
+        .plan-card button {
+            padding: 10px 20px;
+            background-color: var(--dark-gray);
+            color: var(--btn-color);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .plan-card button:hover {
+            background-color: var(--btn-hover);
+            transform: translateY(-2px);
+        }
+
+        .recommended {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo">Hishab Nikash</div>
+        <nav class="site-menu">
+            <a class="menu-item" href="index.html">Home</a>
+            <a class="menu-item" href="pricing.html">Pricing</a>
+            <a class="menu-item" href="login.html">Login / Register</a>
+        </nav>
+    </header>
+
+    <section class="pricing-section">
+        <h1>Become a Member Today</h1>
+        <p>Join us for these amazing benefits.</p>
+
+        <div class="plans-container">
+            <!-- Enterprise Plan -->
+            <div class="plan-card">
+                <div class="recommended">Recommended</div>
+                <h3>Yearly Plan</h3>
+                <div class="price">৳ 999/-</div>
+                <p>per year</p>
+                <ul>
+                    <li>✔ USE FROM ANYWHERE</li>
+                    <li>✔ POS (point of sale)</li>
+                    <li>✔ PRODUCT MANAGEMENT</li>
+                    <li>✔ CUSTOMER MANAGEMENT</li>
+                    <li>✔ ACCOUNTING</li>
+                    <li>✔ and MORE</li>
+                </ul>
+                <button class="btn" onclick="window.location.href='payment.html'">SELECT</button>
+            </div>
+
+            <!-- Standard Plan -->
+            <div class="plan-card">
+                <h3>Monthly Plan</h3>
+                <div class="price">৳ 83/-</div>
+                <p>per month</p>
+                <ul>
+                    <li>✔ USE FROM ANYWHERE</li>
+                    <li>✔ POS (point of sale)</li>
+                    <li>✔ PRODUCT MANAGEMENT</li>
+                    <li>✔ CUSTOMER MANAGEMENT</li>
+                    <li>✔ ACCOUNTING</li>
+                    <li>✔ and MORE</li>
+                </ul>
+                <button class="btn" onclick="window.location.href='payment.html'">SELECT</button>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #eaeef1;
+            margin: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #00796b;
+            color: #fff;
+            padding: 20px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            transition: left 0.3s ease;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 30px;
+            font-size: 30px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 15px 0;
+        }
+
+        .sidebar ul li a {
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            display: block;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            background-color: #003d33;
+            transform: scale(1.05);
+            transition: transform 0.2s;
+        }
+
+        .main {
+            margin-left: 320px;
+            padding: 30px;
+            width: calc(100% - 350px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00796b;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            letter-spacing: 1px;
+            width: 100%;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 25px;
+            max-width: 1500px;
+            width: 200%;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            border: 1px solid #ddd;
+            text-align: left;
+            transition: background-color 0.2s;
+        }
+
+        th {
+            background-color: #00796b;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e0f7fa;
+        }
+
+        .amount-in {
+            color: green;
+            font-weight: bold;
+        }
+
+        .amount-out {
+            color: red;
+            font-weight: bold;
+        }
+
+        .totals {
+            min-width: 250px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-left: 5px solid #00796b;
+            align-items: center;
+        }
+
+        .totals div {
+            color: #333;
+        }
+
+        .total-in {
+            color: green;
+        }
+
+        .total-out {
+            color: red;
+        }
+
+        .total-balance {
+            color: blue;
+            font-size: 1.4em;
+            font-weight: bold;
+        }
+
+        .bank-in {
+            color: green;
+        }
+
+        .bank-out {
+            color: red;
+        }
+
+        .total-bank {
+            color: blue;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        /* Styles for Cash In, Cash Out, and Total Cash */
+        .cash-in {
+            color: green;
+        }
+
+        .cash-out {
+    color: red;
+}
+
+.total-cash {
+    color: blue;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+        .delete-btn {
+            background-color: #ff5252;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .delete-btn:hover {
+            background-color: #ff1744;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 20px;
+                width: 100%;
+                align-items: flex-start;
+            }
+
+            table {
+                width: 100%;
+            }
+
+            .container {
+                flex-direction: column;
+            }
+        }
+      /* Added styling for search and filter section */
+      .search-filter-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #searchInput {
+            width: 30%;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        #filterSelect {
+            width: 150px;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Added styling for date range filter */
+        #startDate, #endDate {
+            width: 150px;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        /* Added styling for CSV export button */
+        #exportButton {
+            padding: 10px 15px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #exportButton:hover {
+            background-color: #005f56;
+        }
+
+         /* Added styling for CSV export button */
+         #exportButton {
+            padding: 10px 15px;
+            background-color: #00796b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #exportButton:hover {
+            background-color: #005f56;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+      <ul>
+            <li><a href="transition_list.html"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="account_details.html"><i class="fas fa-plus-circle"></i> Add Account</a></li>
+            <li><a href="account_list.html"><i class="fas fa-list"></i> View Accounts</a></li>
+            <li><a href="transection_details.html"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+            <!-- <li><a href="transition_list.html"><i class="fas fa-list-alt"></i> Transactions List</a></li> -->
+            <li><a href="visual_analysis.html"><i class="fas fa-chart-line"></i> Visual Analysis</a></li>
+            <li><a href="login.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        </ul>
+    </div>
+    
+
+    <div class="main">
+        <h1>Transaction List</h1>
+        <p></p>
+
+      <!-- Updated search and filter section with date range -->
+<div class="search-filter-container">
+    <input type="text" id="searchInput" placeholder="Search by User Name" oninput="searchTransactions()">
+    
+    <!-- Date range inputs -->
+    <label for="startDate">From:</label>
+    <input type="date" id="startDate" onchange="filterByDateRange()">
+    <label for="endDate">To:</label>
+    <input type="date" id="endDate" onchange="filterByDateRange()">
+    
+    <select id="filterSelect" onchange="handleFilterChange()">
+        <option value="">Sort By</option>
+        <option value="date">Date</option>
+        <option value="amountOut">Amount In</option>
+        <option value="amountIn">Amount Out</option>
+        <option value="userName">User Name</option>
+    </select>
+    <!-- Button for exporting to CSV -->
+    <button id="exportButton" onclick="exportToCSV()">Export to CSV</button>
+</div>
+
+        <div class="container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>User ID</th> <!-- Added User ID header -->
+                        <th>User Name</th>
+                        <th>Transaction Date</th>
+                        <th>Reason</th>
+                        <th>Description</th>
+                        <th>Money Type</th>
+                        <th>Amount In</th>
+                        <th>Amount Out</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="transactionListBody">
+                    <!-- Transaction rows will be added here dynamically -->
+                </tbody>
+            </table>
+
+            <div class="totals">
+                <p>
+                    <div class="bank-in">Bank Cash In: <span id="totalBankIn">0.00</span></div>
+                    <div class="bank-out">Bank Cash Out: <span id="totalBankOut">0.00</span></div>
+                    <div class="total-bank">Total Bank Amount: <span id="totalBankAmount">0.00</span></div>
+                    <p>
+                    <div class="cash-in">Cash In: <span id="totalCashIn">0.00</span></div>
+                    <div class="cash-out">Cash Out: <span id="totalCashOut">0.00</span></div>
+                    <div class="total-cash">Total Cash Amount: <span id="totalCashAmount">0.00</span></div>
+                </p>
+                        <div class="total-in">Total Amount In: <span id="totalAmountIn">0.00</span></div>
+                        <div class="total-out">Total Amount Out: <span id="totalAmountOut">0.00</span></div>
+                        <div class="total-balance">Total Balance: <span id="totalBalance">0.00</span></div>
+            </div>
+            
+        </div>
+    </div>
+
+    <script>
+        let transactions = []; // Store transactions globally
+
+        function loadTransactions() {
+            transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+            displayTransactions(transactions); // Display the transactions
+            updateTotals(transactions); // Update totals
+        }
+
+        const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
+
+// Function to set the active link based on saved value in localStorage
+function setActiveLink() {
+    const activeLink = localStorage.getItem('activeLink');
+    if (activeLink) {
+        sidebarLinks.forEach(link => {
+            if (link.getAttribute('href') === activeLink) {
+                link.classList.add('active');
+            }
+        });
+    }
+}
+
+// Set active link on page load
+setActiveLink();
+
+// Add click event to all links to save the active link in localStorage
+sidebarLinks.forEach(link => {
+    link.addEventListener('click', function () {
+        // Remove 'active' class from all links
+        sidebarLinks.forEach(link => link.classList.remove('active'));
+
+        // Add 'active' class to the clicked link
+        this.classList.add('active');
+
+        // Save the clicked link href to localStorage
+        localStorage.setItem('activeLink', this.getAttribute('href'));
+    });
+});
+
+function displayTransactions(transactionsToDisplay) {
+    const transactionListBody = document.getElementById('transactionListBody');
+    transactionListBody.innerHTML = ''; // Clear existing rows
+
+    transactionsToDisplay.forEach((transaction, index) => {
+        // Log the entire transaction object
+        console.log(transaction);  // Check the structure of each transaction object
+
+        const amountIn = transaction.type === 'income' ? transaction.amount : '';
+        const amountOut = transaction.type === 'expense' ? transaction.amount : '';
+
+        // Safely access userId and userName
+        const userId = transaction.userId !== undefined ? transaction.userId : 'undefined';  // Display 'undefined' if no userId
+        const userName = transaction.userName !== undefined ? transaction.userName : 'undefined';  // Display 'undefined' if no userName
+
+        console.log(`User ID: ${userId}, User Name: ${userName}`); // Log values
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${userId}</td> <!-- Display User ID -->
+            <td>${userName}</td> <!-- Display User Name -->
+            <td>${transaction.date}</td>
+            <td>${transaction.reason}</td>
+            <td>${transaction.description}</td>
+            <td>${transaction.moneyType}</td>
+            <td class="${amountIn ? 'amount-in' : ''}">${amountIn ? '+ ' + amountIn : ''}</td>
+            <td class="${amountOut ? 'amount-out' : ''}">${amountOut ? '- ' + amountOut : ''}</td>
+            <td><button class="delete-btn" onclick="deleteTransaction(${index})">Delete</button></td>
+        `;
+        transactionListBody.appendChild(row);
+    });
+}
+        function filterByDateRange() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    
+    if (startDate && endDate) {
+        const filteredTransactions = transactions.filter(transaction => {
+            const transactionDate = new Date(transaction.date);
+            return transactionDate >= new Date(startDate) && transactionDate <= new Date(endDate);
+        });
+        displayTransactions(filteredTransactions);
+    } else {
+        displayTransactions(transactions); // Show all if no date range is selected
+    }
+}
+
+
+function updateTotals(transactionsToDisplay) {
+    const totalBankIn = transactionsToDisplay
+        .filter(t => t.moneyType.toLowerCase() === 'bank' && t.type.toLowerCase() === 'income')
+        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+    const totalBankOut = transactionsToDisplay
+        .filter(t => t.moneyType.toLowerCase() === 'bank' && t.type.toLowerCase() === 'expense')
+        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+    const totalIn = transactionsToDisplay
+        .filter(t => t.type.toLowerCase() === 'income')
+        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+    const totalOut = transactionsToDisplay
+        .filter(t => t.type.toLowerCase() === 'expense')
+        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+    const totalBankAmount = totalBankIn - totalBankOut;
+
+    const totalCashIn = transactionsToDisplay
+        .filter(t => t.moneyType.toLowerCase() === 'cash' && t.type.toLowerCase() === 'income')
+        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+    const totalCashOut = transactionsToDisplay
+        .filter(t => t.moneyType.toLowerCase() === 'cash' && t.type.toLowerCase() === 'expense')
+        .reduce((sum, t) => sum + parseFloat(t.amount), 0);
+
+    const totalCashAmount = totalCashIn - totalCashOut;
+    
+    const totalBalance = totalIn - totalOut;
+
+    document.getElementById('totalBankIn').innerText = totalBankIn.toFixed(2);
+    document.getElementById('totalBankOut').innerText = totalBankOut.toFixed(2);
+    document.getElementById('totalBankAmount').innerText = totalBankAmount.toFixed(2);
+    
+    document.getElementById('totalCashIn').innerText = totalCashIn.toFixed(2);
+    document.getElementById('totalCashOut').innerText = totalCashOut.toFixed(2);
+    document.getElementById('totalCashAmount').innerText = totalCashAmount.toFixed(2);
+
+    document.getElementById('totalAmountIn').innerText = totalIn.toFixed(2);
+    document.getElementById('totalAmountOut').innerText = totalOut.toFixed(2);
+    document.getElementById('totalBalance').innerText = totalBalance.toFixed(2);
+
+    // Update colors for cash and bank based on their values
+    const totalBankAmountElement = document.getElementById('totalBankAmount');
+    const totalCashAmountElement = document.getElementById('totalCashAmount');
+    const totalBalanceElement = document.getElementById('totalBalance');
+
+    totalBankAmountElement.style.color = totalBankAmount > 0 ? 'green' : (totalBankAmount < 0 ? 'red' : 'blue');
+    totalCashAmountElement.style.color = totalCashAmount > 0 ? 'green' : (totalCashAmount < 0 ? 'red' : 'blue');
+    totalBalanceElement.style.color = totalBalance > 0 ? 'green' : (totalBalance < 0 ? 'red' : 'blue');
+}
+
+
+        function exportToCSV() {
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "User Name,Transaction Date,Reason,Description,Money Type,Amount In,Amount Out\n";
+
+    transactions.forEach(transaction => {
+        const amountIn = transaction.type === 'income' ? transaction.amount : '';
+        const amountOut = transaction.type === 'expense' ? transaction.amount : '';
+
+        // Format the row with correct date inclusion
+        const row = [
+            transaction.userId, 
+            transaction.date,  // Correct reference to the date field
+            transaction.reason, 
+            transaction.description, 
+            transaction.moneyType, 
+            amountIn, 
+            amountOut
+        ].join(",");
+
+        csvContent += row + "\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "transactions.csv");
+    document.body.appendChild(link); // Required for FF
+    link.click();
+}
+
+
+
+        function handleFilterChange() {
+            const selectedFilter = document.getElementById('filterSelect').value;
+            let sortedTransactions = [...transactions];
+
+            if (selectedFilter === 'date') {
+                sortedTransactions.sort((a, b) => new Date(a.date) - new Date(b.date));
+            } else if (selectedFilter === 'amountIn') {
+                sortedTransactions.sort((a, b) => parseFloat(a.type === 'income' ? a.amount : 0) - parseFloat(b.type === 'income' ? b.amount : 0));
+            } else if (selectedFilter === 'amountOut') {
+                sortedTransactions.sort((a, b) => parseFloat(a.type === 'expense' ? a.amount : 0) - parseFloat(b.type === 'expense' ? b.amount : 0));
+            } else if (selectedFilter === 'userName') {
+                sortedTransactions.sort((a, b) => a.userId.localeCompare(b.userId));
+            }
+
+            displayTransactions(sortedTransactions);
+        }
+        
+
+        function searchTransactions() {
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+            const filteredTransactions = transactions.filter(transaction => transaction.userName.toLowerCase().includes(searchValue));
+            displayTransactions(filteredTransactions);
+        }
+
+        function deleteTransaction(index) {
+            transactions.splice(index, 1); // Remove the transaction
+            localStorage.setItem('transactions', JSON.stringify(transactions)); // Update localStorage
+            loadTransactions(); // Reload transactions
+        }
+
+        loadTransactions(); // Initialize the transaction list when the page loads
+    </script>
+</body>
+
+</html>
