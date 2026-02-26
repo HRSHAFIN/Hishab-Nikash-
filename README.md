@@ -38,6 +38,3 @@
 * `transition_list.html` - The transaction ledger featuring live total calculations (Cash vs. Bank), date filtering, and CSV export.
 * `visual_analysis.html` - The analytics dashboard rendering interactive financial charts.
 * `ip.php` - A backend utility script for checking server IPs.
-
-
-Would you like me to draft a `CONTRIBUTING.md` file as well, or help you write the backend SQL database schema to replace the `localStorage` setup?
